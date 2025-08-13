@@ -2,17 +2,17 @@ import { FiSearch } from "react-icons/fi";
 import { IoMdArrowDropdown } from "react-icons/io";
 import { useState } from "react";
 
-export default function Filter({name}) {
+export default function SubscriptionFilter() {
   const [rentStatus, setRentStatus] = useState("Rent Status");
   const [propertyType, setPropertyType] = useState("Property Type");
   const [date, setDate] = useState("Date");
   const [openDropdown, setOpenDropdown] = useState(null);
 
   return (
-    <div className="flex items-center justify-between  ">
+    <div className="flex items-center justify-between gap-10 ">
      
       <div>
-      <p className="text-[16px] flex items-center gap-2 font-[500] text-[#181818]"><span className="h-[32px] w-[12px] bg-gradient-to-t from-[#003897] to-[#0151DA] rounded-[4px]"></span>{name}</p>
+      <p className="text-[16px] flex items-center gap-2 font-[500] text-[#181818]"><span className="h-[32px] w-[12px] bg-gradient-to-t from-[#003897] to-[#0151DA] rounded-[4px]"></span> Subscription Management</p>
       </div>
    <div className="flex items-center gap-2">
       {/* Search */}

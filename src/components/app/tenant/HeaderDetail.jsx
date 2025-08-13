@@ -17,7 +17,7 @@ export default function HeaderDetail() {
               {" "}
               Justin Timberlake{" "}
               <span className="text-[16px] font-[400] text-[#181818]">
-                Landlord Name
+                Tenant Name
               </span>
             </p>
           </div>

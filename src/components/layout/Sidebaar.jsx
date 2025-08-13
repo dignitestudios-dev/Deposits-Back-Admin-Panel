@@ -30,12 +30,12 @@ const Sidebaar = ({ toggleModal }) => {
           {/* Parent Item */}
           <div
             className={`cursor-pointer text-sm w-full h-10 flex items-center gap-5 px-2  justify-between rounded-[8px] font-medium text-[#181818] ${
-              location.pathname.includes(sidebar.link)
+              location.pathname.includes(sidebar.link) || openDropdown === sidebar.title 
                 ? " bg-gradient-to-r from-[#D7D3F1]/30 via-[#E9D1ED]/30 via-[#C5D7F5]/30 to-[#F9B9CF]/30  "
                 : ""
             }`}
             onClick={() =>
-              sidebar.children ? toggleDropdown(sidebar.title) : null
+               toggleDropdown(sidebar.title)
             }
           >
             <NavLink
@@ -60,15 +60,15 @@ const Sidebaar = ({ toggleModal }) => {
 
           {/* Child Items */}
           {sidebar.children && openDropdown === sidebar.title && (
-            <div className="ml-10 mt-2 flex flex-col gap-2">
+            <div className=" pl-2 mt-2 flex flex-col gap-2">
               {sidebar.children.map((child) => (
                 <NavLink
                   to={child.link}
                   key={child.link}
                   className={({ isActive }) =>
                     isActive
-                      ? "text-sm text-[#2F7EF7] font-semibold flex items-center gap-2"
-                      : "text-sm text-[#181818] flex items-center gap-2"
+                      ? "text-sm border-[#2F7EF7] border-[1px] rounded-[8px] p-2  font-semibold flex items-center gap-2"
+                      : "text-sm text-[#181818] flex items-center p-2 gap-2"
                   }
                 >
                   <img

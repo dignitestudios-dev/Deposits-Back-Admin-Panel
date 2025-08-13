@@ -4,6 +4,7 @@ import RentHistory from "../../../components/app/properties/RentHistory";
 import Reviews from "../../../components/app/properties/Reviews";
 import TenantAgreements from "../../../components/app/properties/TenantAgreements";
 import LandlordAgreements from "../../../components/app/properties/LandLordAgreementS";
+import LandLordRules from "../../../components/app/properties/LandLordRules";
 
 export default function PropertiesDetail() {
     return (
@@ -18,6 +19,7 @@ export default function PropertiesDetail() {
                 <Reviews/>
                <TenantAgreements/>
                <LandlordAgreements/>
+               <LandLordRules/>
             </div>
             </div>
         </div>
