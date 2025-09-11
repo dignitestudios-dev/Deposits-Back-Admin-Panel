@@ -1,10 +1,10 @@
 import React from "react";
 import Modal from "react-modal";
 import { FiX, FiTrash2 } from "react-icons/fi";
-
+import { TbLoaderQuarter } from "react-icons/tb";
 Modal.setAppElement("#root"); // Make sure your app root id is 'root'
 
-export default function DeleteModal({ isOpen, onClose, onDelete }) {
+export default function DeleteModal({ isOpen, onClose, onDelete ,loading }) {
   return (
     <Modal
       isOpen={isOpen}
@@ -25,7 +25,7 @@ export default function DeleteModal({ isOpen, onClose, onDelete }) {
         <div className="bg-[#FFF2F0] rounded-full w-12 h-12 flex items-center justify-center">
           <FiTrash2 size={28} className="text-[#F04438]" />
         </div>
-      </div>
+      </div> 
 
       {/* Title */}
       <div className="text-center font-semibold text-lg mb-2">Delete Data</div>
@@ -43,12 +43,18 @@ export default function DeleteModal({ isOpen, onClose, onDelete }) {
         >
           Cancel
         </button>
-        <button
+        {loading ?  <button
+          className=" flex-1 py-2 rounded-full bg-[#F04438] text-white font-medium cursor-not-allowed justify-center items-center"
+          onClick={onDelete}
+        >
+          <TbLoaderQuarter size={25} className=" animate-spin justify-center items-center flex w-full" /> 
+        </button> : <button
           className="flex-1 py-2 rounded-full bg-[#F04438] text-white font-medium"
           onClick={onDelete}
         >
           Delete
-        </button>
+        </button>}
+        
       </div>
     </Modal>
   );

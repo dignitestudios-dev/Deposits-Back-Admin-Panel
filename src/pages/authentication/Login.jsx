@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { useLogin } from "../../hooks/api/Post";
 import { processLogin } from "../../lib/utils";
 import { useFormik } from "formik";
@@ -8,11 +8,14 @@ import { FiLoader } from "react-icons/fi";
 import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
 import { logo } from "../../assets/export";
 import { loginValues } from "../../init/authentication/authentication";
-
+import { ErrorToast } from "../../components/global/Toaster";
+import axios from "../../axios";
+import { AppContext } from "../../context/AppContext";
 const Login = () => {
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
-
-  const { loading, postData } = useLogin();
+const navigate = useNavigate();
+const [loading,setloading] = useState(false)
+const {handleLogin} = useContext(AppContext)
 
   const { values, handleBlur, handleChange, handleSubmit, errors, touched } =
     useFormik({
@@ -21,18 +24,33 @@ const Login = () => {
       validateOnChange: true,
       validateOnBlur: true,
       onSubmit: async (values, action) => {
-        const data = {
-          email: values?.email,
-          password: values?.password,
-        };
-        postData("/admin/login", false, null, data, processLogin);
+        try {
+          setloading(true)
+          const response = await axios.post("/auth/adminSignIn", {
+            email: values.email,
+            password: values.password,
+          });
+          
+          if (response?.status === 200) {
+            handleLogin(response?.data)
+            console.log(response,"response")
+            
+            navigate("/dashboard");
+           
+          }
+        } catch (err) {
+          ErrorToast(
+            err.response?.data?.message || "Login failed. Please try again."
+          );
+        } finally {
+          setloading(false);
+        }
 
         // Use the loading state to show loading spinner
         // Use the response if you want to perform any specific functionality
         // Otherwise you can just pass a callback that will process everything
       },
     });
-
   return (
     <div className="w-full h-auto flex flex-col items-center p-6 justify-center md:w-[499px] md:h-[548px]  rounded-[19px] bg-white">
       <img src={logo} alt="orange_logo" className="w-[148.4px]" />
@@ -49,25 +67,25 @@ const Login = () => {
         className="w-full md:w-[393px] mt-5 flex flex-col justify-start items-start gap-4"
       >
         <div className="w-full h-auto flex flex-col justify-start items-start gap-1">
-          <label htmlFor="username" className="text-[14px] font-[500] leading-[20.4px] text-[#181818]">
-            Username
+          <label htmlFor="email" className="text-[14px] font-[500] leading-[20.4px] text-[#181818]">
+            Email
           </label>
           <input
             type="text"
-            id="username"
-            name="username"
-            value={values.username}
+            id="email"
+            name="email"
+            value={values.email}
             onChange={handleChange}
             onBlur={handleBlur}
             className={`w-full h-[49px] border-[0.8px] bg-[#F8F8F899] outline-none  rounded-[8px] placeholder:text-[#959393] text-[#262626] px-3 text-[16px] font-normal leading-[20.4px] ${
-              errors?.username && touched?.username
+              errors?.email && touched?.email
                 ? "border-red-500"
                 : "border-[#D9D9D9]"
             }`}
             placeholder="Username"
           />
-          {errors.username && touched.username ? (
-            <p className="text-red-700 text-sm font-medium">{errors.username}</p>
+          {errors.email && touched.email ? (
+            <p className="text-red-700 text-sm font-medium">{errors.email}</p>
           ) : null}
         </div>
 
@@ -109,7 +127,7 @@ const Login = () => {
 
         <div className="w-full -mt-1  flex items-center justify-start">
           <NavLink
-            to={"/forgotpassword"}
+            to={"/auth/forgotpassword"}
             className="text-[#003897] hover:no-underline hover:text-black text-[14px] font-[500] leading-[20.4px]"
           >
             Forgot Password?

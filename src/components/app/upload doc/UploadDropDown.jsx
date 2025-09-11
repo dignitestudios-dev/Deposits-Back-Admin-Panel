@@ -1,12 +1,72 @@
 // src/components/app/upload doc/UploadDocModal.jsx
-import React from "react";
+import React, { useState } from "react";
 import Modal from "react-modal";
 import { FiX, FiUpload } from "react-icons/fi";
+import { useFormik } from "formik";
+import axios from "../../../axios";
+import { SuccessToast } from "../../global/Toaster";
+import { documentValues } from "../../../init/app/App";
+import { documentSchema } from "../../../schema/app/AppSchema";
+import { TbLoaderQuarter } from "react-icons/tb";
 
 // Make sure your app root id is 'root'
 Modal.setAppElement("#root");
 
-export default function UploadDropDown({ isOpen, onClose,  }) {
+export default function UploadDropDown({ isOpen, onClose,categories ,getDocumentList,getCategories}) {
+  console.log(categories,"-- categories--");
+  const [isLoading, setIsLoading] = useState(false);
+  const { values, handleBlur, handleChange, handleSubmit, errors, touched , setFieldValue } =
+    useFormik({
+      initialValues: documentValues,
+      validationSchema: documentSchema,
+      validateOnChange: true,
+      validateOnBlur: true,
+      onSubmit: async (values, action) => {
+        setIsLoading(true);
+        try {
+          const formData = new FormData();
+          formData.append("title", values.title);
+          formData.append("type", values.category);
+          formData.append("state", values.state);
+
+          if (isOpen === "file") formData.append("files", values.file);
+          if (isOpen === "link") formData.append("formLink", values.link);
+          if (isOpen === "text") formData.append("text", values.text);
+      
+          console.log("FormData Entries:", [...formData.entries()]); // 👀 check yahan
+      
+          const response = await axios.post(`/admin/uploadLegalDocs`, formData);
+      if(response.status === 201){
+        action.resetForm();
+        onClose();
+        SuccessToast('Document uploaded successfully');
+        getDocumentList()
+      }
+          console.log("Response:", response);
+        } catch (error) {
+          console.error("Error creating document:", error);
+        } finally {
+          setIsLoading(false);
+        }
+      }
+      
+    });
+    console.log(values.category,"category  -000 ---");
+    const  addCategory = async()=>{
+      try {
+        const response = await axios.post(`/laws/category`, { category: values.category });
+        if (response.status === 200) {
+          setFieldValue("category", values.category);
+          getCategories()
+         
+        }
+      } catch (error) {
+        console.error("Error adding category:", error);
+      }
+      
+    }
+
+console.log(values.file,"errors");
   return (
     <Modal
       isOpen={isOpen}
@@ -26,7 +86,7 @@ export default function UploadDropDown({ isOpen, onClose,  }) {
       <h2 className="text-xl font-semibold mb-6">Upload New Document</h2>
 
       {/* Form */}
-      <form  className="space-y-6">
+      <form onSubmit={handleSubmit}  className="space-y-6">
         {/* Document Title */}
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -34,89 +94,165 @@ export default function UploadDropDown({ isOpen, onClose,  }) {
           </label>
           <input
             type="text"
+            name="title"
+            id="title"
+            value={values.title}
+            onChange={handleChange}
+            onBlur={handleBlur}
             required
             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             placeholder="Enter document title"
           />
+         
         </div>
 
         {/* Category */}
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            Category
+          </label>
+          <select
+            name="category"
+            id="category"
+            value={values.category}
+            onChange={handleChange}
+            onBlur={handleBlur}
+           
+            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+          >
+            <option value="">Select Category</option>
+            {categories?.map((category ,idx)=>(
+                <option className="" key={idx} value={category}>{category}</option>
+            ))}
+           
+          </select>
+          <div className="flex items-center py-3 gap-2">
+          <input type="text" value={values.category} onChange={handleChange} onBlur={handleBlur} name="category" id="category" className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" />
+          <button type="button" onClick={addCategory} className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600">Add</button>
+          </div>
+        </div>
 
-        {/* State */}
+
+
+
+
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">
             State
           </label>
           <select
+            name="state"
+            id="state"
+            value={values.state}
+            onChange={handleChange}
+            onBlur={handleBlur}
             required
             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
           >
-            <option value="">Select state</option>
+            <option value="">Select State</option>
             <option value="CA">California</option>
             <option value="NY">New York</option>
             <option value="TX">Texas</option>
             {/* Add more states as needed */}
           </select>
         </div>
-
         {/* File Upload */}
         {isOpen === "file" && (
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            Upload File
+  <div>
+    <label className="block text-sm font-medium text-gray-700 mb-1">
+      Upload File
+    </label>
+    <div className="mt-1 flex flex-col items-center justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-md">
+      <FiUpload className="mx-auto h-12 w-12 text-gray-400" />
+
+      {/* ✅ Only show Upload Button if no file selected */}
+      {!values.file && (
+        <div className="flex text-sm text-gray-600 mt-2">
+          <label className="relative cursor-pointer bg-white rounded-md font-medium text-blue-600 hover:text-blue-500 focus-within:outline-none">
+            <span>Upload a file</span>
+            <input
+              type="file"
+              name="file"
+              id="file"
+              onChange={(e) => {
+                const file = e.currentTarget.files[0];
+                setFieldValue("file", file);
+              }}
+              onBlur={handleBlur}
+              className="sr-only"
+              accept=".pdf,.doc,.docx"
+            />
           </label>
-          <div className="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-md">
-            <div className="space-y-1 text-center">
-              <FiUpload className="mx-auto h-12 w-12 text-gray-400" />
-              <div className="flex text-sm text-gray-600">
-                <label className="relative cursor-pointer bg-white rounded-md font-medium text-blue-600 hover:text-blue-500 focus-within:outline-none">
-                  <span>Upload a file</span>
-                  <input
-                    type="file"
-                    required
-                    className="sr-only"
-                    accept=".pdf,.doc,.docx"
-                  />
-                </label>
-                <p className="pl-1">or drag and drop</p>
-              </div>
-              <p className="text-xs text-gray-500">PDF, DOC, DOCX up to 10MB</p>
-            </div>
-          </div>
+          <p className="pl-1">or drag and drop</p>
         </div>
-        )}
-        {/* {link upload} */}
-{isOpen === "link" && (
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            Document URL
-          </label>
-          <input
-            type="url"
-            required
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            placeholder="https://example.com/document.pdf"
-            pattern="https?://.+"
-            title="Please enter a valid URL (http:// or https://)"
-          />
-          <p className="mt-1 text-xs text-gray-500">
-            Enter the direct URL to your document
+      )}
+
+      <p className="text-xs text-gray-500 mt-1">
+        PDF, DOC, DOCX up to 10MB
+      </p>
+
+      {/* ✅ Show file name if uploaded */}
+      {values.file && (
+        <div className="flex items-center gap-2 mt-2">
+          <p className="text-green-600 text-sm font-medium">
+            {values.file.name}
           </p>
+          <button
+            type="button"
+            onClick={() => setFieldValue("file", null)}
+            className="text-red-500 text-xs hover:underline"
+          >
+            Remove
+          </button>
         </div>
+      )}
+    </div>
+  </div>
+)}
+
+
+        {/* {link upload} */}
+        {isOpen === "link" && (
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Document URL
+            </label>
+            <input
+              type="url"
+              name="link"
+              id="link"
+              value={values.link}
+              onChange={handleChange}
+              onBlur={handleBlur}
+              required
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              placeholder="https://example.com/document.pdf"
+              pattern="https?://.+"
+              title="Please enter a valid URL (http:// or https://)"
+            />
+            <p className="mt-1 text-xs text-gray-500">
+              Enter the direct URL to your document
+            </p>
+          </div>
         )}
         {/* {text upload} */}
         {isOpen === "text" && (
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            Subscription Price
-          </label>
-          <textarea
-            type="text"
-            required
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            placeholder="Enter subscription price"
-          />
-        </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Subscription Price
+            </label>
+            <textarea
+              type="text"
+              name="text"
+              id="text"
+              value={values.text}
+              onChange={handleChange}
+              onBlur={handleBlur}
+              required
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              placeholder="Enter subscription price"
+            />
+          </div>
         )}
         {/* Actions */}
         <div className="flex justify-end gap-3 pt-4 border-t">
@@ -127,12 +263,19 @@ export default function UploadDropDown({ isOpen, onClose,  }) {
           >
             Cancel
           </button>
+          {isLoading ?<button
+           type="submit"
+            className="flex items-center gap-2 bg-[#181818] text-white rounded-full px-5 py-2 font-[500] text-[14px] hover:bg-[#222] transition-all"
+          >
+            <TbLoaderQuarter size={25} className=" animate-spin justify-center items-center flex w-full" /> 
+          </button> :
           <button
-            type="submit"
+           type="submit"
             className="flex items-center gap-2 bg-[#181818] text-white rounded-full px-5 py-2 font-[500] text-[14px] hover:bg-[#222] transition-all"
           >
             Upload
-          </button>
+          </button>}
+          
         </div>
       </form>
     </Modal>

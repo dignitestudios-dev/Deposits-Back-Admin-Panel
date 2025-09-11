@@ -1,38 +1,17 @@
 import React from "react";
 import { FiEdit } from "react-icons/fi";
 import { useNavigate } from "react-router";
-const data = [
-  {
-    code: "258496",
-    propertyName: "Property Title",
-    leaseStart: "01-01-2025",
-    leaseEnd: "31-12-2025",
-    rent: "$1200",
-    owner: { name: "Justin Timberlake", avatar: "https://ui-avatars.com/api/?name=Justin+Timberlake" },
-    rentStatus: "Pending",
-    status: "Occupied",
-    link: "#"
-  },
-  {
-    code: "258496",
-    propertyName: "Property Title",
-    leaseStart: "01-01-2025",
-    leaseEnd: "31-12-2025",
-    rent: "$1200",
-    owner: { name: "Justin Timberlake", avatar: "https://ui-avatars.com/api/?name=Justin+Timberlake" },
-    rentStatus: "Paid",
-    status: "Occupied",
-    link: "#"
-  }
-];
+import { dateFormate } from "../../../lib/helpers";
+import Pagination from "../../global/Pagination";
 
 const badgeClass = (status) => {
   if (status === "Paid") return "bg-green-100 text-green-700";
   if (status === "Pending") return "bg-yellow-100 text-yellow-700";
+  if (status === "Unpaid") return "bg-red-100 text-red-700";
   return "bg-gray-200 text-gray-700";
 };
 
-export default function PropertiesList() {
+export default function PropertiesList({properties,pagination,setPage}) {
   const navigate = useNavigate();
   return (
     <div className="  overflow-hidden">
@@ -48,36 +27,39 @@ export default function PropertiesList() {
       <div>Status</div>
     </div>
     {/* Rows */}
-    {data.map((row, idx) => (
+    {properties.map((property, idx) => (
       <div
         key={idx}
-        onClick={() => navigate(`/properties/1`)}
+        onClick={() => navigate(`/properties/${property._id}`)}
         className="cursor-pointer grid grid-cols-8 items-center py-4 px-2 text-[14px] font-[400] border-b"
       >
         <div className="pl-2 flex items-center gap-1 text-[#0151DA] underline">
           <FiEdit size={16} />
-          <span>{row.code}</span>
+          <span>{property.uniquePropertyCode}</span>
         </div>
-        <div className="underline">{row.propertyName}</div>
-        <div>{row.leaseStart}</div>
-        <div>{row.leaseEnd}</div>
-        <div>{row.rent}</div>
+        <div className="truncate max-w-[100px]">{property.name}</div>
+        <div>{property.leaseStartDate==="null" ? "--" : dateFormate(property.leaseStartDate) }</div>
+        <div>{property.leaseEndDate==="null" ? "--" : dateFormate(property.leaseEndDate) }</div>
+        <div>${property.rent}</div>
         <div className="flex items-center gap-2">
           <img
-            src={row.owner.avatar}
-            alt={row.owner.name}
+            src={property.landlord.profilePicture}
+            alt={property.landlord.name}
             className="w-7 h-7 rounded-full object-cover"
           />
-          <span className="truncate max-w-[100px]">{row.owner.name}</span>
+          <span className="truncate max-w-[100px]">{property.landlord.name || property.tenant.name}</span>
         </div>
         <div>
-          <span className={`rounded-full px-4 py-1 font-semibold text-xs ${badgeClass(row.rentStatus)}`}>
-            {row.rentStatus}
+          <span className={`rounded-full px-4 py-1 font-semibold text-xs ${badgeClass(property.paymentStatus)}`}>
+            {property.paymentStatus}
           </span>
         </div>
-        <div>{row.status}</div>
+        <div>{property.status}</div>
       </div>
     ))}
+    <div className="flex justify-end">
+      <Pagination pagnition={pagination} setPageNo={setPage}/>
+    </div>
   </div>
 ) ;
 };

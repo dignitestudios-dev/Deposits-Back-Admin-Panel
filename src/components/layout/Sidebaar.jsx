@@ -17,11 +17,9 @@ const Sidebaar = ({ toggleModal }) => {
       {/* Logo + Toggle */}
       <div className="flex items-center justify-between p-4">
         <div className="flex justify-center">
-          <img src={logo} alt="logo" className="w-[40px]" />
+          <img src={logo} alt="logo" className="w-[80px]" />
         </div>
-        <button onClick={() => toggleModal()} className="w-6 h-6">
-          <img src={toggle} alt="" className="w-full h-full text-black" />
-        </button>
+        
       </div>
 
       {/* Sidebar Items */}

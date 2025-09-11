@@ -2,14 +2,14 @@ import { FiSearch } from "react-icons/fi";
 import { IoMdArrowDropdown } from "react-icons/io";
 import { useState } from "react";
 
-export default function Filter() {
-  const [rentStatus, setRentStatus] = useState("Rent Status");
-  const [propertyType, setPropertyType] = useState("Property Type");
-  const [date, setDate] = useState("Date");
+export default function Filter({setType,setRentStatus,setSearch ,type,rentStatus}) {
+ 
+
+
   const [openDropdown, setOpenDropdown] = useState(null);
 
   return (
-    <div className="flex items-center gap-10 ">
+    <div className="flex items-center justify-between  ">
      
       <div>
       <p className="text-[16px] flex items-center gap-2 font-[500] text-[#181818]"><span className="h-[32px] w-[12px] bg-gradient-to-t from-[#003897] to-[#0151DA] rounded-[4px]"></span> Properties</p>
@@ -34,14 +34,15 @@ export default function Filter() {
           <IoMdArrowDropdown size={20} className="ml-1" />
         </button>
         {openDropdown === "rent" && (
-          <div className="absolute left-0 mt-2 w-full bg-white border border-[#E4E4E4] rounded-lg shadow-lg z-10">
-            {["All", "Rented", "Vacant"].map(option => (
+          <div className="absolute left-0 mt-2 w-[150px] bg-white border border-[#E4E4E4] rounded-lg shadow-lg z-10">
+            {["Paid", "Unpaid"].map(option => (
               <div
                 key={option}
                 className="px-4 py-2 cursor-pointer hover:bg-gray-100"
                 onClick={() => {
                   setRentStatus(option);
                   setOpenDropdown(null);
+                 
                 }}
               >
                 {option}
@@ -56,17 +57,17 @@ export default function Filter() {
           className="flex items-center bg-white border border-[#E4E4E4] rounded-full px-6 h-10 text-[16px] font-[300]"
           onClick={() => setOpenDropdown(openDropdown === "type" ? null : "type")}
         >
-          {propertyType}
+          {type}
           <IoMdArrowDropdown size={20} className="ml-1" />
         </button>
         {openDropdown === "type" && (
-          <div className="absolute left-0 mt-2 w-full bg-white border border-[#E4E4E4] rounded-lg shadow-lg z-10">
-            {["All", "Apartment", "House", "Villa"].map(option => (
+          <div className="absolute left-0 mt-2 w-[150px] bg-white border border-[#E4E4E4] rounded-lg shadow-lg z-10">
+            {["Apartment", "House", "Condo", "Townhouse", "Duplex", "Office", "Retail", "Warehouse", "Land"].map(option => (
               <div
                 key={option}
                 className="px-4 py-2 cursor-pointer hover:bg-gray-100"
                 onClick={() => {
-                  setPropertyType(option);
+                  setType(option);
                   setOpenDropdown(null);
                 }}
               >
@@ -77,31 +78,7 @@ export default function Filter() {
         )}
       </div>
       {/* Date Dropdown */}
-      <div className="relative">
-        <button
-          className="flex items-center bg-white border border-[#E4E4E4] rounded-full px-6 h-10 text-[16px] font-[300]"
-          onClick={() => setOpenDropdown(openDropdown === "date" ? null : "date")}
-        >
-          {date}
-          <IoMdArrowDropdown size={20} className="ml-1" />
-        </button>
-        {openDropdown === "date" && (
-          <div className="absolute left-0 mt-2 w-full bg-white border border-[#E4E4E4] rounded-lg shadow-lg z-10">
-            {["Newest", "Oldest"].map(option => (
-              <div
-                key={option}
-                className="px-4 py-2 cursor-pointer hover:bg-gray-100"
-                onClick={() => {
-                  setDate(option);
-                  setOpenDropdown(null);
-                }}
-              >
-                {option}
-              </div>
-            ))}
-          </div>
-        )}
-      </div>
+     
       </div>
     </div>
   );

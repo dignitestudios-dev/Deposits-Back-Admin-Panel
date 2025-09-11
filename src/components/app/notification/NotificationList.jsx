@@ -1,29 +1,32 @@
 import React, { useState } from "react";
 import { FiTrash2 } from "react-icons/fi";
+import Pagination from "../../global/Pagination";
+import axios from "../../../axios";
+import { SuccessToast } from "../../global/Toaster";
+import DeleteModal from "./DeleteModal";
 
-const initialNotifications = [
-  {
-    title: "Latest Offer",
-    description: "Adipiscing sem nunc a nunc mi. Nibh mattis quis massa aenean nisl potenti.",
-    type: "Landlord",
-  },
-  {
-    title: "Update Subscription",
-    description: "Adipiscing sem nunc a nunc mi. Nibh mattis quis massa aenean nisl potenti.",
-    type: "Tenant",
-  },
-  {
-    title: "New Feature",
-    description: "Adipiscing sem nunc a nunc mi. Nibh mattis quis massa aenean nisl potenti.",
-    type: "Both",
-  },
-];
+export default function NotificationList({Notification,pagination,setPage ,getNotificationList}) {
+ const [isOpen, setIsOpen] = useState(false);
+ const [selectedDocumentId, setSelectedDocumentId] = useState(null);
+ const [loading, setLoading] = useState(false);
 
-export default function NotificationList({deleteModalIsOpen, setDeleteModalIsOpen}) {
- 
-
-  
-
+  console.log(Notification,"Notification")
+  const handleDelete = async () => {
+    try {
+      setLoading(true)
+      const response = await axios.delete(`/admin/deleteNotification/${selectedDocumentId}`);
+      if (response.data.status === "success" ) {
+        SuccessToast("Notification deleted successfully");
+        setIsOpen(false);
+        setSelectedDocumentId(null);
+        getNotificationList();       
+      }
+    } catch (error) {
+      console.error("Error deleting notification:", error );
+    }finally{
+      setLoading(false)
+    }
+  };
   return (
     <div className=" overflow-hidden">
       {/* Header */}
@@ -34,7 +37,7 @@ export default function NotificationList({deleteModalIsOpen, setDeleteModalIsOpe
         <div className="text-end">Action</div>
       </div>
       {/* Rows */}
-      {initialNotifications.map((item, idx) => (
+      {Notification.map((item, idx) => (
         <div
           key={idx}
           className="grid grid-cols-5 items-center  px-4 text-sm border-b "
@@ -44,7 +47,7 @@ export default function NotificationList({deleteModalIsOpen, setDeleteModalIsOpe
           <div className="pl-20">{item.type}</div>
           <div className="text-end">
             <button
-              onClick={() => setDeleteModalIsOpen(!deleteModalIsOpen)}
+              onClick={() => {setIsOpen(!isOpen) ; setSelectedDocumentId(item._id)}}
               className="text-red-500 hover:bg-red-100 rounded-full  transition justify-end"
               title="Delete Notification"
             >
@@ -53,6 +56,10 @@ export default function NotificationList({deleteModalIsOpen, setDeleteModalIsOpe
           </div>
         </div>
       ))}
+      <div className="flex justify-end my-4">
+                  <Pagination pagnition={pagination} setPageNo={setPage}/>
+                </div>
+                <DeleteModal isOpen={isOpen} onClose={() => setIsOpen(false)} onDelete={()=>handleDelete()} loading={loading}/>
     </div>
   );
 }

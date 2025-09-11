@@ -1,7 +1,8 @@
 import { useState } from "react";
-export default function DashboardBar() {
+export default function DashboardBar({setFilter}) {
     const [activeButton, setActiveButton] = useState("7d"); 
     const buttons = ["7d", "30d", "1y", "All"];
+    setFilter(activeButton)
     return (
         <div className=" w-full h-[60px] flex items-center justify-between  px-4 border-[1px] rounded-[8px] border-[#E3DBDB]">
             <h1 className="text-[16px] font-medium leading-[20.4px] text-[#181818]">DashboardBar</h1>

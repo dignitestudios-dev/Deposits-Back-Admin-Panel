@@ -13,11 +13,15 @@ const CountDown = ({ isActive, setIsActive, seconds, setSeconds }) => {
 
     return () => clearInterval(timer);
   }, [isActive, seconds]);
-
+  const formatTime = (secs) => {
+    const mins = Math.floor(secs / 60);
+    const secsRemaining = secs % 60;
+    return `${String(mins).padStart(2, '0')}:${String(secsRemaining).padStart(2, '0')}`;
+  };
   return (
     <div className="countdown">
       <p className="text-[13px] font-bold">
-        00:{seconds}
+        {formatTime(seconds)}
       </p>
     </div>
   );

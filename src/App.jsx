@@ -1,4 +1,4 @@
-import { Route, Routes } from "react-router";
+import { Navigate, Route, Routes } from "react-router";
 import "./App.css";
 import DashboardLayout from "./layouts/DashboardLayout";
 
@@ -16,27 +16,37 @@ import PushNotification from "./pages/app/notification/PushNotification";
 import Subscription from "./pages/app/subscription/Subscription";
 import Block from "./pages/app/block/Block";
 import UploadLegalDoc from "./pages/app/upload doc/UploadLegalDoc";
+import ProfileReview from "./pages/app/profile/ProfileReview";
+import Cookies from "js-cookie";
+import appRoutes from "./routes/app/AppRoutes";
+function ProtectedRoute({ children }) {
+  const token = Cookies.get("token");
+  return token ? children : <Navigate to="/auth/login" replace />;
+}
 
 
-
-
-function App() {
+function App () {
   return (
     <Routes>
    
 
-      <Route path="/" element={<DashboardLayout />}>
-        <Route path="dashboard" element={<Dashboard />} />
-        <Route path="tenants/:id" element={<TenantDetails />} />
-        <Route path="landlords/:id" element={<LandLordDetails />} />
-        <Route path="properties" element={<Properties />} />
-        <Route path="properties/:id" element={<PropertiesDetail />} />
-        <Route path="tenants" element={<Tenant />} />
-        <Route path="landlords" element={<Landlord />} />
-        <Route path="notification" element={<PushNotification />} />
-        <Route path="subscription" element={<Subscription />} />
-        <Route path="block" element={<Block />} />
-        <Route path="upload-doc" element={<UploadLegalDoc />} />
+   <Route
+        path="/"
+        element={
+          <ProtectedRoute>
+            <DashboardLayout />
+          </ProtectedRoute>
+        }
+      >
+        {appRoutes.map((route, index) => (
+          <Route
+            key={index}
+            path={route.url}
+            element={<route.page />}
+          />
+        ))}
+        {/* Optional default redirect for "/" */}
+        <Route index element={<Navigate to="/dashboard" replace />} />
       </Route>
 
       <Route path="auth" element={<AuthLayout />}>

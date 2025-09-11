@@ -8,13 +8,15 @@ Modal.setAppElement("#root");
 export default function BlockDeletedModal({
   isOpen,
   onClose,
-  onUnblock,
+  userInfo,
   user = {
     name: "Justin Timberlake",
     avatar: "https://randomuser.me/api/portraits/men/32.jpg",
     role: "Landlord",
   },
+  unblock,
 }) {
+  console.log(userInfo, "userInfo");
   return (
     <Modal
       isOpen={isOpen}
@@ -33,23 +35,25 @@ export default function BlockDeletedModal({
       {/* User Info */}
       <div className="flex items-center gap-3 mb-4">
         <img
-          src={user.avatar}
-          alt={user.name}
+          src={userInfo?.user?.profilePicture}
+          alt={userInfo?.user?.name}
           className="w-12 h-12 rounded-full object-cover"
         />
         <div>
-          <div className="font-semibold text-[15px] text-[#181818]">{user.name}</div>
-          <div className="text-xs text-[#565656]">{user.role}</div>
+          <div className="font-semibold text-[15px] text-[#181818]">
+            {userInfo?.user?.name || userInfo?.name}
+          </div>
+          <div className="text-xs text-[#565656]">
+            {userInfo?.type || userInfo?.role}
+          </div>
         </div>
       </div>
 
       {/* Title */}
-      <div className="font-semibold text-[17px] mb-2">Unblock User</div>
+      {/* <div className="font-semibold text-[17px] mb-2">Unblock User</div> */}
 
       {/* Description */}
-      <div className="text-[13px] text-[#181818] mb-8">
-        Lorem Et Ultricies Tincidunt Lacinia Maecenas Erat. Non Lacus At Eget Auctor Ultrices Volutpat Vitae Vestibulum. Ut Elit Soelerisque Vivamus In Mauris Viverra Et Eros.
-      </div>
+      <div className="text-[13px] text-[#181818] mb-8">{userInfo?.reason}</div>
 
       {/* Actions */}
       <div className="flex justify-end gap-2 border-t pt-4">
@@ -61,7 +65,12 @@ export default function BlockDeletedModal({
         </button>
         <button
           className="px-8 py-2 rounded-full bg-[#F04438] text-white font-medium"
-          onClick={onUnblock}
+          onClick={() =>
+            unblock(
+              userInfo?.user?._id || userInfo?._id,
+              userInfo?.type || userInfo?.role
+            )
+          }
         >
           Unblock
         </button>

@@ -85,8 +85,20 @@ const properties = [
   },
 ];
 
-export default function PropertieList() {
+export default function PropertieList({properties}) {
     const navigate = useNavigate();
+    const badgeClass = (status) => {
+      switch (status) {
+        case "Paid":
+          return "bg-[#E8FFF3] text-[#4CD964]";
+        case "Unpaid":
+          return "bg-[#FFD29D] text-[#FF9F1C]";
+        case "No Tenant":
+          return "bg-[#E6E6E6] text-[#7D7D7D]";
+        default:
+          return "bg-[#E6E6E6] text-[#7D7D7D]";
+      }
+    };
   return (
     <div className="">
       {/* Header */}
@@ -97,6 +109,7 @@ export default function PropertieList() {
         <div>Type</div>
         <div>Rent</div>
         <div>Status</div>
+        
         <div>Rent Status</div>
       </div>
       {/* Rows */}
@@ -108,7 +121,7 @@ export default function PropertieList() {
           
           <div className="flex items-center gap-2 text-[#1569BF] font-medium underline cursor-pointer">
             <FiEdit size={16} />
-            <span>{item.code}</span>
+            <span>{item.uniquePropertyCode}</span>
           </div>
           <div className="text-[#181818] font-medium underline cursor-pointer">
             {item.name}
@@ -118,11 +131,11 @@ export default function PropertieList() {
           <div>{item.status}</div>
           <div className="flex items-center justify-between">
             <span
-              className={`px-4 py-1 rounded-full text-[13px] font-medium ${item.rentStatusColor}`}
+              className={`px-4 py-1 rounded-full text-[13px] font-medium ${badgeClass(item.paymentStatus)}`}
             >
-              {item.rentStatus}
+              {item.paymentStatus}
             </span>
-            <button onClick={() => navigate(`/properties/1`)} className=" text-right"><CiMenuKebab /></button>
+            <button onClick={() => navigate(`/properties/${item._id}`)} className=" text-right"><CiMenuKebab /></button>
           </div>
           
         </div>

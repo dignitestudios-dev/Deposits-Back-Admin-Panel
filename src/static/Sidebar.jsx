@@ -7,7 +7,11 @@ import {
 
   document,
 
+  
+
   document_blue,
+
+  
 
   manageusers,
   manageusers_blue,
@@ -15,9 +19,12 @@ import {
   notification_Blue,
   Polygon,
   polygon_blue,
+  profile,
+  profile_blue,
   properties,
   properties_blue,
   reports,
+  reports_blue,
   wallet,
   wallet_blue,
   
@@ -68,7 +75,7 @@ export const sidebarData = [
   {
     title: "Block",
     icon: reports,
-    iconBlue: reports,
+    iconBlue: reports_blue,
     link: "/block",
   },
   {
@@ -76,5 +83,11 @@ export const sidebarData = [
     icon: document,
     iconBlue: document_blue,
     link: "/upload-doc",
+  },
+  {
+    title: "Profile Review",
+    icon: profile,
+    iconBlue: profile_blue,
+    link: "/profile-review",
   },
 ];

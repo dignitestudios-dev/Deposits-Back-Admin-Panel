@@ -28,7 +28,11 @@ import document_blue from "./document_blue.png";
 import backArrow from "./backarrow.png";
 import landlordpic from "./Landlordcoverpic.png";
 import tenantpic from "./Tenantcoverpic.png";
+import profile from "./profile.png";
+import profile_blue from "./profile_blue.png";
+import pdf from "./pdf.png";
 export {
+  pdf,
   backArrow,
   landlordpic,
   tenantpic,
@@ -53,4 +57,6 @@ export {
   wallet_blue,
   polygon_blue,
   document_blue,
+  profile,
+  profile_blue,
 };

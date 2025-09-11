@@ -1,7 +1,9 @@
 import { FiUser, FiExternalLink, FiDownload } from "react-icons/fi";
-import { FaFilePdf } from "react-icons/fa";
+import { FaFilePdf, FaRegImage } from "react-icons/fa";
 import { useState } from "react";
 import { manageusers } from "../../../assets/export";
+import { RxVideo } from "react-icons/rx";
+import { useNavigate } from "react-router";
 
 const agreements = [
   {
@@ -15,26 +17,14 @@ const agreements = [
 ];
 
 const downloadFile = (url, label) => {
-  fetch(url)
-    .then(res => res.blob())
-    .then(blob => {
-      const blobUrl = window.URL.createObjectURL(blob);
-      const link = document.createElement("a");
-      link.href = blobUrl;
-      link.download = `${label}.pdf`;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      window.URL.revokeObjectURL(blobUrl);
-    })
-    .catch(err => {
-      console.error("Failed to download:", err);
-      alert("Failed to download the file.");
-    });
+  
+    window.open(url, "_blank");
+
 }
 
-export default function TenantAgreements() {
+export default function TenantAgreements({property}) {
   const [activeTab, setActiveTab] = useState("agreements");
+  const navigate = useNavigate()
   return (
     <div className="bg-white rounded-[12px] p-5 w-full max-w-[420px] mt-4">
       {/* Header */}
@@ -47,12 +37,15 @@ export default function TenantAgreements() {
       {/* Profile */}
       <div className="flex items-center gap-4 mb-4 px-2">
         <img
-          src="https://randomuser.me/api/portraits/men/32.jpg"
+          src={property?.tenant?.profilePicture}
           alt="Tenant"
           className="w-[72px] h-[72px] rounded-full object-cover"
         />
-        <span className="font-semibold text-[20px]">Eleanor Herzog</span>
+        <span className="font-semibold text-[20px]">{property?.tenant?.name}</span>
+        <button onClick={()=>navigate(`/tenants/${property.tenant._id}`)}>
+
         <FiExternalLink className="ml-auto text-[20px] cursor-pointer" />
+        </button>
       </div>
       {/* Tabs */}
       <div className="flex gap-2 mb-4 bg-[#F2F2F2] rounded-[10px] p-2">
@@ -64,8 +57,10 @@ export default function TenantAgreements() {
         </button>
       </div>
       {/* Agreements List */}
+{activeTab === "agreements" && (
       <div className="flex flex-col gap-3">
-        {agreements.map((ag, idx) => (
+        
+        { property?.tenant?.agreements&& property?.tenant?.agreements.length>0 ? property?.tenant?.agreements?.map((ag, idx) => (
           <div
             key={idx}
             className="flex items-center bg-[#F3F8FF] rounded-[10px] px-4 py-3"
@@ -80,8 +75,57 @@ export default function TenantAgreements() {
               <FiDownload className="text-[24px]" />
             </button>
           </div>
-        ))}
+        )): (
+          <p className="text-gray-500 text-center py-4">Not found</p>
+        )}
       </div>
+)}   
+{activeTab === "repairs" && (
+      <div className="flex flex-col gap-3 overflow-y-scroll h-[200px]">
+         <p className="font-[400] text-[16px] flex-1">Videos</p>
+      {property?.tenant?.repairVideos&& property?.tenant?.repairVideos.length>0 ? (property?.tenant?.repairVideos?.map((agreement, idx) => (
+                <div
+                  key={idx}
+                  className="flex items-center bg-[#F3F8FF] rounded-[10px] px-4 py-3"
+                >
+                  <RxVideo className="text-[#003897] text-[26px] mr-3" />
+                  <span className="font-[400] text-[16px] flex-1">{agreement.fileKey}</span>
+                  <button
+                    onClick={() => downloadFile(agreement.fileUrl, agreement.fileKey)}
+                    className="ml-2 p-2 rounded-full hover:bg-[#E6F0FA] transition"
+                    title="Download"
+                  >
+                    <FiDownload className="text-[24px]" />
+                  </button>
+                </div>
+              ))):(
+                <p className="text-gray-500 text-center py-4">Not found</p>
+              )}
+              <p className="font-[400] text-[16px] flex-1">Images</p>
+              
+              {property?.tenant?.repairImages && property.tenant.repairImages.length > 0 ? (
+  property.tenant.repairImages.map((agreement, idx) => (
+    <div
+      key={idx}
+      className="flex items-center bg-[#F3F8FF] rounded-[10px] px-4 py-3"
+    >
+      <FaRegImage className="text-[#003897] text-[26px] mr-3" />
+      <span className="font-[400] text-[16px] flex-1">{agreement.fileKey}</span>
+      <button
+        onClick={() => downloadFile(agreement.fileUrl, agreement.fileKey)}
+        className="ml-2 p-2 rounded-full hover:bg-[#E6F0FA] transition"
+        title="Download"
+      >
+        <FiDownload className="text-[24px]" />
+      </button>
     </div>
+  ))
+) : (
+  <p className="text-gray-500 text-center py-4">Not found</p>
+)}
+
+      </div>
+)}   
+ </div>
   );
 }

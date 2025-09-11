@@ -6,6 +6,7 @@ import NoInternetModal from "../components/global/NoInternet";
 import { NoInternetImage } from "../assets/export";
 import Sidebaar from "../components/layout/Sidebaar";
 import Navbar from "../components/layout/Navbar";
+import LogOutModal from "../components/authentication/LogOutModal";
 
 const DashboardLayout = () => {
   const [openNoInternet, setOpenNoInternet] = useState(false);
@@ -33,6 +34,7 @@ const DashboardLayout = () => {
         
         <div className="w-[calc(100%-15rem)] h-screen pt-16 px-4 overflow-y-auto bg-[#F3F8FF] ">
           <NoInternetModal isOpen={openNoInternet} />
+          <LogOutModal />
           <Outlet />
         </div>
       </div>

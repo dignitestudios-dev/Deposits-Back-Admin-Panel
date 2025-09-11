@@ -2,10 +2,8 @@ import { FiSearch } from "react-icons/fi";
 import { IoMdArrowDropdown } from "react-icons/io";
 import { useState } from "react";
 
-export default function SubscriptionFilter() {
-  const [rentStatus, setRentStatus] = useState("Rent Status");
-  const [propertyType, setPropertyType] = useState("Property Type");
-  const [date, setDate] = useState("Date");
+export default function SubscriptionFilter({setStatus,status}) {
+  console.log(status,"status")
   const [openDropdown, setOpenDropdown] = useState(null);
 
   return (
@@ -30,17 +28,17 @@ export default function SubscriptionFilter() {
           className="flex items-center bg-white border border-[#E4E4E4] rounded-full px-4 h-10 text-[16px] font-[300]"
           onClick={() => setOpenDropdown(openDropdown === "rent" ? null : "rent")}
         >
-          {rentStatus}
+          {status}
           <IoMdArrowDropdown size={20} className="ml-1" />
         </button>
         {openDropdown === "rent" && (
           <div className="absolute left-0 mt-2 w-full bg-white border border-[#E4E4E4] rounded-lg shadow-lg z-10">
-            {["All", "Rented", "Vacant"].map(option => (
+            {["active", "inactive", "cancelled"].map(option => (
               <div
                 key={option}
                 className="px-4 py-2 cursor-pointer hover:bg-gray-100"
                 onClick={() => {
-                  setRentStatus(option);
+                  setStatus(option);
                   setOpenDropdown(null);
                 }}
               >
@@ -51,7 +49,7 @@ export default function SubscriptionFilter() {
         )}
       </div>
       {/* Property Type Dropdown */}
-      <div className="relative">
+      {/* <div className="relative">
         <button
           className="flex items-center bg-white border border-[#E4E4E4] rounded-full px-6 h-10 text-[16px] font-[300]"
           onClick={() => setOpenDropdown(openDropdown === "type" ? null : "type")}
@@ -75,9 +73,9 @@ export default function SubscriptionFilter() {
             ))}
           </div>
         )}
-      </div>
+      </div> */}
       {/* Date Dropdown */}
-      <div className="relative">
+      {/* <div className="relative">
         <button
           className="flex items-center bg-white border border-[#E4E4E4] rounded-full px-6 h-10 text-[16px] font-[300]"
           onClick={() => setOpenDropdown(openDropdown === "date" ? null : "date")}
@@ -101,7 +99,7 @@ export default function SubscriptionFilter() {
             ))}
           </div>
         )}
-      </div>
+      </div> */}
       </div>
     </div>
   );

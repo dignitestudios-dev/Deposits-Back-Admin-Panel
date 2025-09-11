@@ -3,7 +3,7 @@ import { useLogin } from "../../hooks/api/Post";
 import { processLogin } from "../../lib/utils";
 import { useFormik } from "formik";
 
-import { NavLink, useNavigate } from "react-router";
+import { NavLink, useLocation, useNavigate } from "react-router";
 import { FiLoader } from "react-icons/fi";
 import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
 import { logo } from "../../assets/export";
@@ -11,14 +11,20 @@ import { ChangedValues } from "../../init/authentication/authentication";
 import { ChangedSchema } from "../../schema/authentication/authenticationSchema";
 import UpdatePasswordSuccessfully from "../../components/authentication/UpdatePasswordSuccessFully";
 import { AppContext } from "../../context/AppContext";
+import axios from "../../axios";
+import { ErrorToast } from "../../components/global/Toaster";
 
 
 const ChangePasword = () => {
+  const location = useLocation();
+ 
+  const { resetToken, email } = location.state || {};
+ const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
 
  const { updatePasswordSuccessfully, setUpdatePasswordSuccessfully } = useContext(AppContext);
-  const { loading, postData } = useLogin();
+  // const { loading, postData } = useLogin();
 
   const { values, handleBlur, handleChange, handleSubmit, errors, touched } =
     useFormik({
@@ -27,15 +33,34 @@ const ChangePasword = () => {
       validateOnChange: true,
       validateOnBlur: true,
       onSubmit: async (values, action) => {
-        const data = {
-          email: values?.email,
-          password: values?.password,
-        };
-        postData("/admin/change-password", false, null, data, processLogin);
-
-        // Use the loading state to show loading spinner
-        // Use the response if you want to perform any specific functionality
-        // Otherwise you can just pass a callback that will process everything
+        try {
+          setLoading(true)
+          const data = {
+            email: email,
+            resetToken: resetToken,
+            password: values.password,
+            confirmPassword: values.confirmpassword,
+            role:"admin"
+          };
+      
+          const response = await axios.post("/auth/updatePassOTP", data);
+      
+          if (response?.status === 200) {
+            setUpdatePasswordSuccessfully(true); 
+      
+            
+            setTimeout(() => {
+              setUpdatePasswordSuccessfully(false);
+              navigate("/auth/login");
+            }, 3000);
+          } else {
+            ErrorToast(response?.data?.message || "Failed to update password");
+          }
+        } catch (error) {
+          ErrorToast(error?.response?.data?.message || "Failed to update password");
+        } finally {
+          setLoading(false)
+        } 
       },
     });
 
@@ -51,8 +76,7 @@ const ChangePasword = () => {
         onSubmit={(e) => {
           e.preventDefault();
           handleSubmit(e);
-          setUpdatePasswordSuccessfully(true);
-          navigate("/auth/login");
+         
         }}
         className="w-full md:w-[393px] mt-5 flex flex-col justify-start items-start gap-4"
       >
@@ -149,7 +173,7 @@ const ChangePasword = () => {
 
        
       </form>
-      <UpdatePasswordSuccessfully />
+       <UpdatePasswordSuccessfully />
     </div>
   );
 };

@@ -1,5 +1,7 @@
 import React from "react";
 import { useNavigate } from "react-router";
+import { dateFormate } from "../../../lib/helpers";
+import Pagination from "../../global/Pagination";
 
 const landlords = [
   {
@@ -46,8 +48,9 @@ const badgeClass = (status) => {
   return "bg-gray-200 text-gray-700";
 };
 
-export default function LandLordList() {
+export default function LandLordList({data,pagination,setPage}) {
   const navigate = useNavigate();
+
   return (
     <div className="">
       {/* Header */}
@@ -61,39 +64,42 @@ export default function LandLordList() {
         <div></div>
       </div>
       {/* Rows */}
-      {landlords.map((row, idx) => (
+      {data.map((landlord, idx) => (
         <div
           key={idx}
           className="grid grid-cols-7 items-center py-4 px-2 text-sm border-b"
         >
           <div className="flex items-center gap-2 pl-2">
             <img
-              src={row.avatar}
-              alt={row.name}
+              src={landlord.profilePicture}
+              alt={landlord.name}
               className="w-7 h-7 rounded-full object-cover"
             />
-            <span className="truncate max-w-[120px]">{row.name}</span>
+            <span className="truncate max-w-[120px]">{landlord.name}</span>
           </div>
-          <div>{row.onboardDate}</div>
-          <div>{row.totalProperties}</div>
-          <div>{row.subscription}</div>
-          <div>{row.price}</div>
+          <div>{dateFormate(landlord.createdAt)}</div>
+          <div>{landlord.propertyUsed||"--"}</div>
+          <div>Monthly</div>
+          <div>${landlord.currentSubPrice||"--"}</div>
           <div>
             <span
               className={`rounded-full px-4 py-1 font-semibold text-xs ${badgeClass(
-                row.status
+                landlord.status
               )}`}
             >
-              {row.status}
+              {landlord.status}
             </span>
           </div>
-          <div onClick={() => navigate(`/landlords/1`) } className="text-[#1569BF] cursor-pointer underline font-medium text-xs">
+          <div onClick={() => navigate(`/landlords/${landlord._id}`,{state:{landlord}}) } className="text-[#1569BF] cursor-pointer underline font-medium text-xs">
             
               View Details
             
           </div>
         </div>
       ))}
+      <div className="flex justify-end my-4">
+                  <Pagination pagnition={pagination} setPageNo={setPage}/>
+                </div>
     </div>
   );
 }

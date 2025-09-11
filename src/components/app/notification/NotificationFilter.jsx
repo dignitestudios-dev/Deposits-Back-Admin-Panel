@@ -2,7 +2,7 @@ import { FiSearch } from "react-icons/fi";
 import { IoMdArrowDropdown } from "react-icons/io";
 import { useState } from "react";
 
-export default function NotificationFilter() {
+export default function NotificationFilter({setSearch}) {
   const [date, setDate] = useState("Date");
   const [openDropdown, setOpenDropdown] = useState(null);
   return (
@@ -20,7 +20,8 @@ export default function NotificationFilter() {
           type="text"
           placeholder="Search"
           className="bg-transparent outline-none text-[16px] w-full font-[400]"
-        />
+          onChange={(e) => setSearch(e.target.value)}
+          />
       </div>
       <div className="relative">
         <button

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { FiLoader } from "react-icons/fi";
-import { NavLink, useNavigate } from "react-router";
+import { useNavigate } from "react-router";
 import { logo } from "../../assets/export";
 import { useFormik } from "formik";
 
@@ -8,6 +8,8 @@ import { useFormik } from "formik";
 import { FaArrowLeftLong } from "react-icons/fa6";
 import { ForgotSchema } from "../../schema/authentication/authenticationSchema";
 import { forgotValues } from "../../init/authentication/authentication";
+import { ErrorToast, SuccessToast } from "../../components/global/Toaster";
+import axios from "../../axios";
 export default function ForgotPassword() {
   const navigate = useNavigate("");
   const [loading,setloading]=useState(false)
@@ -18,6 +20,31 @@ export default function ForgotPassword() {
       validateOnChange: true,
       validateOnBlur: true,
       onSubmit: async (values, action) => {
+        try {
+          setloading(true)
+          // Send email for password reset
+          const response = await axios.post(
+            "/auth/sendPassOTP",
+           
+            {
+              email: values.email,
+              role:"admin"
+            }
+          );
+          console.log(response, "response");
+          if (response?.data?.success) {
+            sessionStorage.setItem("email", values.email);
+            SuccessToast(response?.data?.message);
+            navigate("/auth/verifyOtp");
+          }
+          // Navigate to OTP verificatio
+        } catch (error) {
+          ErrorToast(
+            error.response?.data?.message || "Failed to send reset email"
+          );
+        } finally {
+          setloading(false)
+        }
       }
     });
 
@@ -30,9 +57,7 @@ export default function ForgotPassword() {
       />
       <div className="w-full h-auto relative z-10 backdrop-blur-[50px] flex flex-col  p-6 justify-center   rounded-[19px]">
         <div className="w-auto flex  items-center">
-          {/* <NavLink to={"/auth/login"}>
-            <FaArrowLeftLong size={24} className="text-white" />
-          </NavLink> */}
+      
 
           <h2 className="text-[24px] font-[500] mx-auto leading-[36px] text-[#181818]">
             Forgot Password

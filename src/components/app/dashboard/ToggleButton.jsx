@@ -4,22 +4,22 @@ export default function ToggleButton({activeTab , setActiveTab}) {
         <div className="flex bg-[#F6F6F6] rounded-[28px] p-1 relative">
           <button
             className={`px-12 py-2 rounded-full font-medium text-[15px] transition-all duration-200 ${
-              activeTab === "landlords"
+              activeTab === "landlord"
                 ? "bg-[#181818] text-white"
                 : "bg-transparent text-[#181818]"
             }`}
-            onClick={() => setActiveTab("landlords")}
+            onClick={() => setActiveTab("landlord")}
           >
             Landlords
            
           </button>
           <button
             className={`px-12 py-2 rounded-full font-medium text-[15px] transition-all duration-200 ${
-              activeTab === "tenants"
+              activeTab === "tenant"
                 ? "bg-[#181818] text-white"
                 : "bg-transparent text-[#181818]"
             }`}
-            onClick={() => setActiveTab("tenants")}
+            onClick={() => setActiveTab("tenant")}
           >
             Tenants
           </button>

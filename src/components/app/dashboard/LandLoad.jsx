@@ -1,61 +1,14 @@
 import { useState } from "react";
 import FilterToolBar from "./FilterToolBar";
 import { useNavigate } from "react-router";
+import { dateFormate } from "../../../lib/helpers";
 
 
-const landlords = [
-    {
-      name: "Justin Timberlake",
-      profile: "https://randomuser.me/api/portraits/men/1.jpg",
-      onboardDate: "12/06/2020",
-      properties: "06",
-      plan: "Basic Plan",
-      price: "&55",
-      appRevenue: "$1200",
-      status: "Active",
-      detailsLink: "#",
-      priceDot: false,
-    },
-    {
-      name: "Justin Timberlake",
-      profile: "https://randomuser.me/api/portraits/men/1.jpg",
-      onboardDate: "12/06/2020",
-      properties: "06",
-      plan: "Basic Plan",
-      price: "&55",
-      appRevenue: "$1200",
-      status: "Active",
-      detailsLink: "#",
-      priceDot: true,
-    },
-    {
-      name: "Justin Timberlake",
-      profile: "https://randomuser.me/api/portraits/men/1.jpg",
-      onboardDate: "12/06/2020",
-      properties: "06",
-      plan: "Basic Plan",
-      price: "&55",
-      appRevenue: "$1200",
-      status: "Active",
-      detailsLink: "#",
-      priceDot: false,
-    },
-    {
-      name: "Justin Timberlake",
-      profile: "https://randomuser.me/api/portraits/men/1.jpg",
-      onboardDate: "12/06/2020",
-      properties: "06",
-      plan: "Basic Plan",
-      price: "&55",
-      appRevenue: "$1200",
-      status: "Active",
-      detailsLink: "#",
-      priceDot: true,
-    },
-  ];
+
   
-  export default function LandLoad() {
+  export default function LandLoad({data,pagination,setPage}) {
     const navigate = useNavigate();
+    console.log(data,"data")
     return (
         <div >
       <div className=" rounded-[16px] overflow-x-auto p-0 mt-6">
@@ -71,7 +24,7 @@ const landlords = [
           <div className="text-left"></div>
         </div>
         {/* Rows */}
-        {landlords.map((landlord, idx) => (
+        {data.map((data, idx) => (
           <div
             key={idx}
             className={`grid grid-cols-8 items-center text-[#181818] text-[15px] px-4 py-4 border-b last:border-0`}
@@ -79,25 +32,29 @@ const landlords = [
             {/* Landlord Name */}
             <div className="flex items-center gap-2 min-w-[150px]">
               <img
-                src={landlord.profile}
-                alt={landlord.name}
+                src={data.profilePicture}
+                alt={data.name}
                 className="w-6 h-6 rounded-full object-cover"
               />
               <span className="truncate max-w-[80px]" >
-                {landlord.name}
+                {data.name}
               </span>
             </div>
-            <div>{landlord.onboardDate}</div>
-            <div>{landlord.properties}</div>
-            <div>{landlord.plan}</div>
-            <div>{landlord.price}</div>
-            <div>{landlord.appRevenue}</div>
+            <div>{dateFormate(data.onboardDate||"--")}</div>
+            <div>{data.registeredProperties||"--"}</div>
+            <div className="truncate max-w-[105px]">{data.subPlan||"--"}</div>
+            <div>${data.price||"--"}</div>
+            <div className="truncate max-w-[105px]">${data.totalSpent||"--"}</div>
             <div>
-              <span className="bg-[#E8FFF3] text-[#4CD964] px-4 py-1 rounded-full text-[13px] font-medium">
-                {landlord.status}
-              </span>
+            <span
+  className={`px-4 py-1 rounded-full text-[13px] font-medium
+    ${data.subscriptionStatus === "active" ? "bg-[#E8FFF3] text-[#4CD964]" : ""}
+    ${data.subscriptionStatus === "cancelled" ? "bg-[#FFE8E8] text-[#FF3B30]" : ""}`}
+>
+  {data.subscriptionStatus||"--"}
+</span>
             </div>
-            <div  onClick={() => navigate("/landlords/1")} className=" cursor-pointer text-[#1569BF] font-medium text-[13px] underline">
+            <div  onClick={() => navigate(`/landlords/${data._id}`)} className=" cursor-pointer text-[#1569BF] font-medium text-[13px] underline">
             
                
                 View Details

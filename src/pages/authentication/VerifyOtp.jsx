@@ -9,10 +9,10 @@ import { SuccessToast } from "../../components/global/Toaster";
 import Cookies from "js-cookie";
 import { FiLoader } from "react-icons/fi";
 export default function VerifyOtp() {
-  const [otp, setOtp] = useState(Array(4).fill(""));
+  const [otp, setOtp] = useState(Array(5).fill(""));
   const inputs = useRef([]);
   const [isActive, setIsActive] = useState(true);
-  const [seconds, setSeconds] = useState(30);
+  const [seconds, setSeconds] = useState(300);
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const email=sessionStorage.getItem("email");
@@ -27,23 +27,24 @@ export default function VerifyOtp() {
     if (loading) return;
 
     const otpString = otp.join('');
-    if (otpString.length !== 4) {
-      ErrorToast('Please enter a 4-digit OTP');
+    if (otpString.length !== 5) {
+      ErrorToast('Please enter a 5-digit OTP');
       return;
     }
 
     try {
       setLoading(true);
-      const response = await axios.post('/auth/verify-reset-otp',{
+      const response = await axios.post('/auth/validatePassOTP',{
         email: email,
-        otp: otpString,
+        code: otpString,
+        role:"admin"
       });
-
-      if (response.data.success) {
-        console.log(response?.data.data.token);
-        Cookies.set("token", response?.data?.data?.token);
+     
+      if (response?.data?.success) {
+      
+        let resetToken = response.data.resetToken;
         SuccessToast('OTP verified successfully');
-        navigate('/auth/changePassword');
+        navigate('/auth/changePassword', { state: { resetToken, email } });
       } else {
         ErrorToast('Invalid OTP. Please try again');
       }
@@ -52,7 +53,7 @@ export default function VerifyOtp() {
     } finally {
       setLoading(false);
     }
-    setOtp(Array(4).fill(''));
+    setOtp(Array(5).fill(''));
   };
 
 
@@ -94,20 +95,21 @@ export default function VerifyOtp() {
     try {
       // Send email for password reset
       const response = await axios.post(
-        "/auth/verify-reset-otp",
+        "/auth/sendPassOTP",
        
         {
           email:email,
+          role:"admin"
         }
       );
      
-      if (response?.status === 200) {
+      if (response?.data?.success) {
         
         
         SuccessToast(response?.data?.message);
-        setSeconds(30);
+        setSeconds(300);
         setIsActive(true);
-       setOtp(Array(4).fill(''));
+       setOtp(Array(5).fill(''));
       }
       // Navigate to OTP verificatio
     } catch (error) {
@@ -186,7 +188,7 @@ export default function VerifyOtp() {
               </button>
             )}
           </p>
-          <button type="button" className="outline-none w-[194px] h-[38px] text-[14px]  text-[#181818] border-[1px] border-[#E3DBDB] rounded-[8px] font-[400]">Change Email</button>
+          <button type="button" onClick={()=>navigate("/auth/forgotPassword")} className="outline-none w-[194px] h-[38px] text-[14px]  text-[#181818] border-[1px] border-[#E3DBDB] rounded-[8px] font-[400]">Change Email</button>
           </div>          
         </form>
       </div>

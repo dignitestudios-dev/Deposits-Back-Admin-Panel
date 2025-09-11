@@ -1,64 +1,17 @@
 import React from "react";
 import { useNavigate } from "react-router";
+import Pagination from "../../global/Pagination";
 
-const subscriptions = [
-  {
-    name: "Justin Timberlake",
-    avatar: "https://ui-avatars.com/api/?name=Justin+Timberlake",
-    userType: "Landlord",
-    plan: "Premium Subscription",
-    subscription: "Monthly",
-    price: "$49.99",
-    renewDate: "10-18-2025",
-  },
-  {
-    name: "Beyoncé",
-    avatar: "https://ui-avatars.com/api/?name=Beyonce",
-    userType: "Tenant",
-    plan: "Standard Subscription",
-    subscription: "Monthly",
-    price: "$29.99",
-    renewDate: "11-01-2025",
-  },
-  {
-    name: "Ed Sheeran",
-    avatar: "https://ui-avatars.com/api/?name=Ed+Sheeran",
-    userType: "Landlord",
-    plan: "Basic Subscription",
-    subscription: "Yearly",
-    price: "$89.99",
-    renewDate: "12-15-2025",
-  },
-  {
-    name: "Taylor Swift",
-    avatar: "https://ui-avatars.com/api/?name=Taylor+Swift",
-    userType: "Tenant",
-    plan: "Premium Subscription",
-    subscription: "Yearly",
-    price: "$499.99",
-    renewDate: "01-20-2026",
-  },
-  {
-    name: "Drake",
-    avatar: "https://ui-avatars.com/api/?name=Drake",
-    userType: "Landlord",
-    plan: "Standard Subscription",
-    subscription: "Monthly",
-    price: "$39.99",
-    renewDate: "02-10-2026",
-  },
-  {
-    name: "Ariana Grande",
-    avatar: "https://ui-avatars.com/api/?name=Ariana+Grande",
-    userType: "Tenant",
-    plan: "Basic Subscription",
-    subscription: "Monthly",
-    price: "$19.99",
-    renewDate: "03-05-2026",
-  },
-];
 
-export default function SubscriptionList() {
+const badgeClass = (status) => {
+  if (status === "active") return "bg-green-100 text-green-700";
+  if (status === "inactive") return "bg-red-100 text-red-600";
+  if (status === "cancelled") return "bg-yellow-100 text-yellow-600";
+  return "bg-gray-200 text-gray-700";
+};
+
+export default function SubscriptionList({subscriptions,pagination,setPage}) {
+  
     const navigate = useNavigate();
   return (
     <div className="bg-white rounded-xl shadow-sm overflow-hidden">
@@ -73,31 +26,42 @@ export default function SubscriptionList() {
         <div></div>
       </div>
       {/* Rows */}
-      {subscriptions.map((row, idx) => (
+      {subscriptions.map((subscription, idx) => (
         <div
           key={idx}
           className="grid grid-cols-7 items-center py-4 px-2 text-sm border-b last:border-b-0"
         >
           <div className="flex items-center gap-2">
             <img
-              src={row.avatar}
-              alt={row.name}
+              src={subscription?.user?.profilePicture}
+              alt={subscription?.user?.name}
               className="w-7 h-7 rounded-full object-cover"
             />
-            <span className="truncate max-w-[120px]">{row.name}</span>
+            <span className="truncate max-w-[120px]">{subscription?.user?.name}</span>
           </div>
-          <div>{row.userType}</div>
-          <div>{row.plan}</div>
-          <div>{row.subscription}</div>
-          <div>{row.price}</div>
-          <div>{row.renewDate}</div>
+          <div>{subscription?.user?.role}</div>
+          <div className="truncate max-w-[110px]">{subscription?.sku}</div>
+          <div>Monthly</div>
+          <div>${subscription?.price}</div>
           <div>
-            <button onClick={() => navigate(`/landlords/1`)} className="text-[#1569BF] underline font-medium text-xs">
+            <span
+              className={`rounded-full px-4 py-1 font-semibold text-xs capitalize ${badgeClass(
+                subscription?.status
+              )}`}
+            >
+              {subscription?.status}
+            </span>
+          </div>
+          <div>
+            <button onClick={() => navigate(subscription?.user?.role === "tenant" ? `/tenants/${subscription?.user?._id}` : `/landlords/${subscription?.user?._id}`)} className="text-[#1569BF] underline font-medium text-xs">
               View Details
             </button>
           </div>
         </div>
       ))}
+      <div className="flex justify-end my-4">
+        <Pagination pagnition={pagination} setPageNo={setPage}/>
+        </div>
     </div>
   );
 }
