@@ -11,7 +11,7 @@ const [pagination,setPagination]=useState({})
 const getProfile=async()=>{
     try {
         setLoading(true)
-        const response=await axios.get(`/admin/reviewProfile?page=${page}&limit=4&status=${status}`)
+        const response=await axios.get(`/admin/reviewProfile?page=${page}&limit=16&status=${status}`)
         setProfile(response?.data?.data)
         setPagination(response?.data?.pagination)
         setLoading(false)

@@ -58,7 +58,7 @@ export default function UploadDropDown({ isOpen, onClose,categories ,getDocument
         if (response.status === 200) {
           setFieldValue("category", values.category);
           getCategories()
-         
+          getDocumentList()
         }
       } catch (error) {
         console.error("Error adding category:", error);
