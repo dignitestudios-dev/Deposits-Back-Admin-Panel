@@ -7,7 +7,7 @@ export const notificationSchema = Yup.object({
 export const documentSchema = Yup.object({
   title: Yup.string().required("Document title is required"),
   category: Yup.string().required("Document category is required"),
-  state: Yup.string().required("Document state is required"),
+  // state: Yup.string().required("Document state is required"),
 
   file: Yup.mixed(),
   link: Yup.string(),

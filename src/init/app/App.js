@@ -6,7 +6,7 @@ export const notificationValues = {
   export const documentValues = {
     title: "",
     category: "",
-    state:"",
+    // state:"",
     file:"",
     link:"",
     text:"",

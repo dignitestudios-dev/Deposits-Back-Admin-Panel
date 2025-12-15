@@ -8,10 +8,10 @@ import { SuccessToast } from "../../global/Toaster";
 import { documentValues } from "../../../init/app/App";
 import { documentSchema } from "../../../schema/app/AppSchema";
 import { TbLoaderQuarter } from "react-icons/tb";
- 
+
 // Make sure your app root id is 'root'
 Modal.setAppElement("#root");
- 
+
 export default function UploadDropDown({
   isOpen,
   onClose,
@@ -39,13 +39,12 @@ export default function UploadDropDown({
         const formData = new FormData();
         formData.append("title", values.title);
         formData.append("type", values.category);
-        formData.append("state", values.state);
         formData.append("icon", values.icon);
- 
+
         if (isOpen === "file") formData.append("files", values.file);
         if (isOpen === "link") formData.append("formLink", values.link);
         if (isOpen === "text") formData.append("text", values.text);
- 
+
         const response = await axios.post(`/admin/uploadLegalDocs`, formData);
         if (response.status === 201) {
           action.resetForm();
@@ -61,7 +60,7 @@ export default function UploadDropDown({
       }
     },
   });
- 
+
   const addCategory = async () => {
     try {
       const response = await axios.post(`/laws/category`, {
@@ -76,7 +75,7 @@ export default function UploadDropDown({
       console.error("Error adding category:", error);
     }
   };
- 
+
   console.log(values.file, "errors");
   return (
     <Modal
@@ -92,10 +91,10 @@ export default function UploadDropDown({
       >
         <FiX />
       </button>
- 
+
       {/* Title */}
       <h2 className="text-xl font-semibold mb-6">Upload New Document</h2>
- 
+
       {/* Form */}
       <form onSubmit={handleSubmit} className="space-y-6">
         {/* Document Title */}
@@ -115,7 +114,7 @@ export default function UploadDropDown({
             placeholder="Enter document title"
           />
         </div>
- 
+
         {/* Category */}
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -131,7 +130,7 @@ export default function UploadDropDown({
           >
             <option value="">Select Category</option>
             {categories?.map((category, idx) => (
-              <option className="" key={idx} value={category}>
+              <option key={idx} value={category}>
                 {category}
               </option>
             ))}
@@ -155,30 +154,11 @@ export default function UploadDropDown({
             </button>
           </div>
         </div>
- 
-        {/* <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            State
-          </label>
-          <select
-            name="state"
-            id="state"
-            value={values.state}
-            onChange={handleChange}
-            onBlur={handleBlur}
-            required
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-          >
-            <option value="">Select State</option>
-            <option value="CA">California</option>
-            <option value="NY">New York</option>
-            <option value="TX">Texas</option>
 
-          </select>
-        </div> */}
+        {/* Upload Icon */}
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">
-           Upload Icon
+            Upload Icon
           </label>
           <div className="mt-1 flex flex-col items-center justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-md">
             <FiUpload className="mx-auto h-12 w-12 text-gray-400" />
@@ -201,11 +181,11 @@ export default function UploadDropDown({
                 <p className="pl-1">or drag and drop</p>
               </div>
             )}
- 
+
             <p className="text-xs text-gray-500 mt-1">
               PNG, JPG, JPEG, SVG up to 5MB
             </p>
- 
+
             {values.icon && (
               <div className="mt-3 flex flex-col items-center">
                 <img
@@ -224,6 +204,7 @@ export default function UploadDropDown({
             )}
           </div>
         </div>
+
         {/* File Upload */}
         {isOpen === "file" && (
           <div>
@@ -232,8 +213,7 @@ export default function UploadDropDown({
             </label>
             <div className="mt-1 flex flex-col items-center justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-md">
               <FiUpload className="mx-auto h-12 w-12 text-gray-400" />
- 
-              {/* ✅ Only show Upload Button if no file selected */}
+
               {!values.file && (
                 <div className="flex text-sm text-gray-600 mt-2">
                   <label className="relative cursor-pointer bg-white rounded-md font-medium text-blue-600 hover:text-blue-500 focus-within:outline-none">
@@ -254,12 +234,11 @@ export default function UploadDropDown({
                   <p className="pl-1">or drag and drop</p>
                 </div>
               )}
- 
+
               <p className="text-xs text-gray-500 mt-1">
                 PDF, DOC, DOCX up to 10MB
               </p>
- 
-              {/* ✅ Show file name if uploaded */}
+
               {values.file && (
                 <div className="flex items-center gap-2 mt-2">
                   <p className="text-green-600 text-sm font-medium">
@@ -277,8 +256,8 @@ export default function UploadDropDown({
             </div>
           </div>
         )}
- 
-        {/* {link upload} */}
+
+        {/* Link Upload */}
         {isOpen === "link" && (
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -302,7 +281,8 @@ export default function UploadDropDown({
             </p>
           </div>
         )}
-        {/* {text upload} */}
+
+        {/* Text Upload */}
         {isOpen === "text" && (
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -321,6 +301,7 @@ export default function UploadDropDown({
             />
           </div>
         )}
+
         {/* Actions */}
         <div className="flex justify-end gap-3 pt-4 border-t">
           <button
