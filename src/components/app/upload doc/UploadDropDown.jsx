@@ -173,7 +173,7 @@ export default function UploadDropDown({
             <option value="CA">California</option>
             <option value="NY">New York</option>
             <option value="TX">Texas</option>
-            {/* Add more states as needed */}
+
           </select>
         </div> */}
         <div>
