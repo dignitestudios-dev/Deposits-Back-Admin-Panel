@@ -9,6 +9,7 @@ export const notificationValues = {
     state:"",
     file:"",
     link:"",
-    text:""
+    text:"",
+    icon:""
   };
-  
+ 

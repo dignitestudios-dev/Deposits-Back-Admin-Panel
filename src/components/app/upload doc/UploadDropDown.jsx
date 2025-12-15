@@ -156,7 +156,7 @@ export default function UploadDropDown({
           </div>
         </div>
  
-        <div>
+        {/* <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">
             State
           </label>
@@ -175,7 +175,7 @@ export default function UploadDropDown({
             <option value="TX">Texas</option>
             {/* Add more states as needed */}
           </select>
-        </div>
+        </div> */}
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">
            Upload Icon
